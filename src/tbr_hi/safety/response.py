@@ -1,4 +1,4 @@
-"""Full-context first- and second-order risk-proxy responses."""
+"""Full-context first- and second-order surrogate safety responses."""
 
 import itertools
 import math

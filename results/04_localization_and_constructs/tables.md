@@ -84,9 +84,9 @@ Source: formal localization and descriptive construct reporting view. Each analy
 | EMP-M | primary_nontrivial | Gs_to_Gt | relation | 0.5245 | 0.5181 | 0.5310 | 21186 |
 | EMP-M | primary_nontrivial | Rs_to_Rt | relation | 0.5231 | 0.5166 | 0.5295 | 21322 |
 
-## Historical proximity: paired increments against the same response target
+## Historical exposure: paired increments against the same response target
 
-Source: formal paired historical-proximity comparisons. Dependence ranking minus historical-proximity ranking, on common valid scenes.
+Source: formal paired historical-exposure comparisons. Dependence ranking minus historical-exposure ranking, on common valid scenes.
 
 | model name | metric name | target name | comparison name | mean paired difference | ci95 low | ci95 high | bh q |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -115,9 +115,9 @@ Source: formal paired historical-proximity comparisons. Dependence ranking minus
 | EMP-M | ndcg_at_3 | temporal_response | dependence_minus_history_spatial_for_temporal_response | 0.1065 | 0.1007 | 0.1123 | 0.0005 |
 | EMP-M | ndcg_at_3 | temporal_response | dependence_minus_history_temporal_for_temporal_response | 0.1562 | 0.1503 | 0.1620 | 0.0005 |
 
-## Joint historical-proximity adjustment
+## Joint historical-exposure adjustment
 
-Source: formal historical-proximity adjustment results. Control for both spatial and TTCE–DCE historical proximity measures.
+Source: formal historical-exposure adjustment results. Control for both spatial and TTCE–DCE historical exposure measures.
 
 | paper model | relation name | effective scene count | raw mean spearman | adjusted mean partial spearman | adjusted ci95 low | adjusted ci95 high |
 | --- | --- | --- | --- | --- | --- | --- |

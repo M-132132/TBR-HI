@@ -89,6 +89,14 @@ relevance tier. Its groups have unique IDs and disjoint membership. When supplyi
 share a behavior label, but a vehicle belongs to only one player. Keep the player
 order identical in all bitmask tables and replacement dictionaries.
 
+The default `BehaviorConfig` maps primary labels into the six paper categories.
+Custom mappings use disjoint primary-label sets; unmapped labels are excluded.
+`PlayerGroupingConfig` supplies `core_threshold` and `support_threshold`, with
+`core_threshold >= support_threshold`. Defaults are 0.40 and 0.25. Scoring
+parameters belong to `InteractionConfig`; its relevant/weak diagnostic threshold
+does not set the BRT tiers. These optional construction arguments are described
+in the [API reference](api.md#player-construction-configuration).
+
 `physical_score` and `mean_physical_score` denote the member mean.
 `max_physical_score` denotes the member maximum used for the paper's physical
 reference ranking. `group_players` supplies both. When constructing players
@@ -226,6 +234,12 @@ entity measurements with zero.
 
 ### Loss summary keys
 
+Both dependence entry points default to `include_details=True`. Setting it to
+False omits `robust_dividends` and `member_dividends`, retaining D, allocations,
+support contributions, scene summaries and both check dictionaries. The
+trajectory entry point retains the loss tables and eligibility information.
+Consumers that read the omitted keys use the default detailed mode.
+
 In the decomposition output, `scene_order_summary["total_response"]` is a retained
 software key for the **signed loss-game contribution**:
 
@@ -237,7 +251,7 @@ Its unit is metres, inherited from minADE. It is not Rs or Rt. The signed
 `shrinkage_remainder` is added to it to give
 `mean_full_context_loss_improvement`, the weighted mean of
 `L_k(empty) - L_k(full)`. A signed remainder can be negative; it is not an absolute
-mass. Risk-proxy responses are returned separately by the response API.
+mass. Surrogate safety responses are returned separately by the response API.
 
 For `response_from_replacements`, each baseline dictionary contains `()` for the
 full context, `(i,)` for every retained player, and `(i,j)` with i < j for every

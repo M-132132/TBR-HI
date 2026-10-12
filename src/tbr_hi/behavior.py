@@ -1,10 +1,14 @@
-"""Behavior labels and BRT construction from true historical trajectories."""
+"""Behavior labels and BRT construction from ground-truth historical trajectories."""
 
 import numpy as np
 
-from ._behavior_features import _compute_interactions, _compute_track_metrics, _safe_acceleration_from_speed
-from ._behavior_rules import classify_vehicle
-from .config import AnalyzerConfig, BehaviorConfig, InteractionConfig
+from ._behavior.features import (
+    _compute_interactions,
+    _compute_track_metrics,
+    _safe_acceleration_from_speed,
+)
+from ._behavior.rules import classify_vehicle
+from .config import AnalyzerConfig, BehaviorConfig, InteractionConfig, PlayerGroupingConfig
 from .interfaces import History
 from .players import group_players
 from .relevance import compute_target_interactions
@@ -43,18 +47,23 @@ def label_behaviors(history: History, config=AnalyzerConfig()) -> dict[int, dict
     } for index, vehicle in enumerate(vehicles)}
 
 
-def build_players(history: History, behavior_config=AnalyzerConfig(), relevance_config=InteractionConfig()):
+def build_players(
+    history: History, behavior_config=AnalyzerConfig(), relevance_config=InteractionConfig(),
+    *, family_config=None, grouping_config=PlayerGroupingConfig(),
+):
     """
-    功能：从真实历史构造六类行为与三个物理层级组成的 BRT 玩家。
+    功能：按主行为类别与物理相关性层级构造 BRT 玩家，默认六类行为与三层分组。
     输入：
       - history (History)：固定目标坐标系中的真实历史轨迹
       - behavior_config (AnalyzerConfig)：行为识别配置
       - relevance_config (InteractionConfig)：物理相关性配置
+      - family_config (BehaviorConfig | None)：主标签到行为类别的映射，默认使用六类行为
+      - grouping_config (PlayerGroupingConfig)：核心层与支持层阈值，默认 0.40 和 0.25
     输出：
       - (list[BRTPlayer])：不包含目标车的 BRT 玩家
     """
     labels = label_behaviors(history, behavior_config)
-    families = BehaviorConfig().families
+    families = (BehaviorConfig() if family_config is None else family_config).families
     behaviors = {}
     for track, result in labels.items():
         if track == history.target_index:
@@ -68,4 +77,7 @@ def build_players(history: History, behavior_config=AnalyzerConfig(), relevance_
         history.xy[None], history.valid[None], history.target_index,
         behaviors, relevance_config, dt,
     )
-    return group_players(behaviors, {track: row.interaction_score for track, row in relevance.items()})
+    return group_players(
+        behaviors, {track: row.interaction_score for track, row in relevance.items()},
+        grouping_config=grouping_config,
+    )

@@ -1,7 +1,7 @@
 """Rule-based behavior labels computed from in-memory kinematic evidence."""
 
 from typing import Dict, List
-from .config import AnalyzerConfig
+from ..config import AnalyzerConfig
 
 
 def _dedup(labels: List[str]) -> List[str]:

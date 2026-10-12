@@ -228,7 +228,7 @@ The five-variable player cohort additionally requires finite Ps and Pt. P–G an
 | Pt → Gt − Rt → Gt | NDCG@3 | 14,148 | 0.9495 | 0.6099 | 0.3395 [0.3347, 0.3449] | 0.000500 | 0.000500 |
 | Pt → Gt − Rt → Gt | Spearman | 21,187 | 0.8125 | 0.1928 | 0.6197 [0.6113, 0.6282] | 0.000500 | 0.000500 |
 
-## Panel c: historical proximity against the same response target
+## Panel c: historical exposure against the same response target
 
 D, Rs, Rt, Hs and Ht use common valid players and the historical five-variable nonconstant scene cohort. All three rankings are evaluated against the same response target. These are the Figure 7c component means; paired historical comparisons are in [Selected tables](tables.md).
 
@@ -265,7 +265,7 @@ D, Rs, Rt, Hs and Ht use common valid players and the historical five-variable n
 | Ht → Rt | Spearman | spearman | 18,711 | 81,232 | 0.1604 [0.1518, 0.1687] |
 | D → Rt | Spearman | spearman | 18,711 | 81,232 | 0.4482 [0.4407, 0.4554] |
 
-## Panel d: historical-proximity adjustment
+## Panel d: historical-exposure adjustment
 
 Raw and adjusted estimates use the same valid complete-case scenes with at least five players, controlling both Hs and Ht. These are the S5d/Figure 7d intervals. The independently resampled ≥5/≥8 D14 sensitivity record is in [Player count and size](player_count_results.md).
 

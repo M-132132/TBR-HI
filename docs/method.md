@@ -63,6 +63,12 @@ frames. Scores at least 0.40 define the core tier; scores from 0.25 to below 0.4
 define the support tier; smaller scores define the background tier. The internal
 labels are `core_relevant`, `candidate_context`, and `background_weak`.
 
+`PlayerGroupingConfig` supplies those two BRT tier boundaries to `build_players`
+and `group_players`. `InteractionConfig` supplies the scoring parameters; its
+`threshold` only labels the separate relevant/weak diagnostic. `BehaviorConfig`
+supplies the primary-label family mapping. All defaults reproduce the player
+definitions above; custom mappings or boundaries define a different player space.
+
 Player grouping records both mean and maximum member relevance. The retained
 `physical_score` field and `mean_physical_score` property are means;
 `max_physical_score` is the physical reference score for response localization.
@@ -109,6 +115,10 @@ supports. It does not reconstruct a complete robust coalition value table that
 would then be discarded. Member dividends, weighted means and standard deviations,
 shrinkage, and projected outputs follow the same definitions above.
 
+`include_details=False` omits per-coalition and per-member dividend tables while
+retaining the projected quantities, shrinkage remainder and numerical summaries.
+It changes output detail, not the loss game or decomposition definitions.
+
 ## Behavioral support projection
 
 The support of T is the set of **distinct behavior categories** represented in T.
@@ -125,9 +135,9 @@ The common-entity model dependence is `D_i = abs(BO1_i)`. BO1 is distinct from a
 full-order Shapley allocation. Signed BO1, BO2, higher-order support contributions,
 and the shrinkage remainder recover the baseline-averaged full-context loss improvement.
 
-## Risk-proxy responses
+## Surrogate safety responses
 
-Risk-proxy response calculation starts at the full ground-truth historical context.
+Surrogate safety response calculation starts at the full ground-truth historical context.
 Let `r_k(-A)` be a spatial or temporal risk proxy after replacing the histories
 of players A with baseline k. All environment true future trajectories stay fixed.
 
@@ -181,7 +191,7 @@ indexed by the player whose **history is replaced**; the most critical vehicle
 in the future proxy need not be a member of that player. Entity-matched G/H/P
 measurements in the empirical results use their separately defined entity scope.
 
-Model dependence and risk-proxy response share the model, BRT mapping, and
+Model dependence and surrogate safety response share the model, BRT mapping, and
 baseline family, while using different quantities and operations. They are not
 statistically independent. Response strength measures sensitivity of the selected
 safety-related outputs to historical context; it does not establish accident
@@ -191,5 +201,5 @@ probability or overall model safety.
 
 The package supplies the calculations above. Dataset-level localization metrics,
 comparisons against other explanation methods, G/H/P construct analyses, bootstrap
-inference, historical-proximity adjustment, mismatch analyses, and fixed-budget
+inference, historical-exposure adjustment, mismatch analyses, and fixed-budget
 experiments are separate research procedures.

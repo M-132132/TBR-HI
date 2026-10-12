@@ -3,12 +3,16 @@
 ## Start with the method
 
 1. Read [method definitions](method.md) for BRT players, the conditional-trajectory
-   loss game, robust Harsanyi decomposition and risk-proxy responses.
+   loss game, robust Harsanyi decomposition and surrogate safety responses.
 2. Read the [input contract](input_contract.md) for coordinate frames, trajectory
    masks, player membership, baseline coverage and caller responsibilities.
 3. Use the [API reference](api.md) to select an interface and interpret its outputs.
 4. Follow [model adapter guidance](model_adapters.md) to connect the same audited
    predictor to target and environment callbacks.
+
+The API reference also covers [player construction configuration](api.md#player-construction-configuration),
+[optional dividend details](api.md#optional-detail-rows) and the
+[module map](api.md#module-map).
 
 The [synthetic example](../examples/synthetic_demo.py) demonstrates the trajectory
 interface on artificial inputs. [Reproduction scope](reproducibility.md) records

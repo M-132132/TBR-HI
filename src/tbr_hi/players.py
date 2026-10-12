@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 from typing import Sequence
 
+from .config import PlayerGroupingConfig
+
 
 @dataclass(frozen=True)
 class BRTPlayer:
@@ -81,18 +83,25 @@ def tier_family_from_tier(tier: str) -> str:
     return 'other'
 
 
-def group_players(behaviors: dict[int, str], physical_scores: dict[int, float]) -> list[BRTPlayer]:
+def group_players(
+    behaviors: dict[int, str], physical_scores: dict[int, float],
+    *, grouping_config=PlayerGroupingConfig(),
+) -> list[BRTPlayer]:
     """
     功能：按行为类别和目标条件物理层级构造互不重叠的玩家。
     输入：
       - behaviors (dict[int, str])：环境车辆槽位到行为类别
       - physical_scores (dict[int, float])：相同槽位的物理相关性分数
+      - grouping_config (PlayerGroupingConfig)：核心层与支持层阈值，默认 0.40 和 0.25
     输出：
       - (list[BRTPlayer])：按行为和层级排序的玩家，分别保存成员平均分与最大分
     """
     buckets = {}
     for track, behavior in behaviors.items():
-        tier = physical_tier_from_score(physical_scores[track])
+        tier = physical_tier_from_score(
+            physical_scores[track], grouping_config.core_threshold,
+            grouping_config.support_threshold,
+        )
         buckets.setdefault((behavior, tier), []).append(track)
     tier_order = {'core_relevant': 0, 'candidate_context': 1, 'background_weak': 2}
     players = []

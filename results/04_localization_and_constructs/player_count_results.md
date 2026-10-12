@@ -25,7 +25,7 @@ analysis sets, not paired differences between thresholds. Full statistics follow
 
 Jump to [singleton results](#d12-single-vehicle-brt-players),
 [candidate-count strata](#d13-candidate-count-strata), or
-[historical adjustment](#d14-historical-proximity-adjustment-at-5-and-8-players).
+[historical adjustment](#d14-historical-exposure-adjustment-at-5-and-8-players).
 
 ## D12. Single-vehicle BRT players
 
@@ -890,9 +890,9 @@ Coverage counts precede metric validity exclusions.
 
 Coverage counts precede metric validity exclusions.
 
-## D14. Historical-proximity adjustment at ≥5 and ≥8 players
+## D14. Historical-exposure adjustment at ≥5 and ≥8 players
 
-D and each response are rank-regressed on both historical proximity measures
+D and each response are rank-regressed on both historical exposure measures
 within each scene. Residual correlation defines partial Spearman. Eligibility
 requires finite, nonconstant D, Rs, Rt, Hs and Ht, a full-rank control matrix
 (intercept, Hs ranks, Ht ranks), and centered residual norms above 1e-10 for D, Rs
@@ -903,7 +903,7 @@ subtracted for paired inference.
 This threshold-sensitivity table uses the D14 resampling record. Its ≥5 point
 estimates and counts agree with S5d; its independently resampled confidence
 intervals can differ from the S5d/Figure 7d ≥5 intervals. Those paper intervals
-are shown separately in [Common analysis sets](common_analysis_sets.md#panel-d-historical-proximity-adjustment).
+are shown separately in [Common analysis sets](common_analysis_sets.md#panel-d-historical-exposure-adjustment).
 Each model has separate four-test BH families for adjusted means and
 raw-minus-adjusted differences. All intervals use 2,000 scene-bootstrap replicates.
 

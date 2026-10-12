@@ -3,13 +3,12 @@
 import math
 from typing import Dict, List, Sequence, Tuple
 
-from ._coalition_table import coalition_key_text
+from ..players import BRTPlayer as BRPlayer
+from .coalition_table import CoalitionKey, CoalitionValueTable, coalition_key, coalition_key_text
 from .projection import (
     behavior_support,
     compute_mobius_dividends,
 )
-from .players import BRTPlayer as BRPlayer
-from ._coalition_table import CoalitionKey, CoalitionValueTable, coalition_key
 
 
 def coalition_ids_from_mask(mask: int, player_ids: Sequence[str]) -> Tuple[str, ...]:
@@ -120,18 +119,20 @@ def compute_robust_harsanyi(
     baseline_weights: Sequence[float],
     robust_lambda: float,
     reconstruct_table: bool = True,
+    *, include_details: bool = True,
 ) -> Dict:
     """
-    功能：对 baseline family 的每个 Harsanyi dividend 做加权均值、方差和 robust 收缩。
+    功能：对基线族的每个 Harsanyi 股利做加权均值、方差和鲁棒收缩。
     输入：
-      - players (Sequence[BRPlayer])：当前场景 active BRT players
-      - member_value_tables (Sequence[CoalitionValueTable])：逐 baseline member value table
-      - baseline_names (Sequence[str])：baseline member 名称
-      - baseline_weights (Sequence[float])：baseline member 权重
-      - robust_lambda (float)：robust 收缩强度
-      - reconstruct_table (bool)：是否额外重建完整值表；行为支持分解不需要此表
+      - players (Sequence[BRPlayer])：当前场景的有效 BRT 玩家
+      - member_value_tables (Sequence[CoalitionValueTable])：逐基线成员的联盟值表
+      - baseline_names (Sequence[str])：基线成员名称
+      - baseline_weights (Sequence[float])：基线成员权重
+      - robust_lambda (float)：鲁棒收缩强度
+      - reconstruct_table (bool)：是否重建完整值表；行为支持分解不需要此表
+      - include_details (bool)：是否构造逐联盟和逐基线明细，默认保留全部明细
     输出：
-      - (Dict)：dividend 明细、检查信息和可选值表；不重建时 robust_value_table 为 None
+      - (Dict)：股利、收缩余量、检查摘要和可选明细及值表；不重建时值表为 None
     """
     player_ids = list(member_value_tables[0].player_ids)
     players_by_id = {
@@ -157,24 +158,38 @@ def compute_robust_harsanyi(
     robust_dividends = {}
     robust_rows = []
     member_rows = []
+    withheld_dividends = []
+    checks = {
+        "robust_lambda": float(robust_lambda),
+        "baseline_member_count": int(len(member_value_tables)),
+        "nonfinite_member_dividend_count": 0,
+        "nonfinite_robust_dividend_count": 0,
+        "finite_abs_withheld_dividend_count": 0,
+        "zeroed_robust_dividend_count": 0,
+        "finite_total_abs_withheld_dividend": 0.0,
+        "total_abs_withheld_dividend": 0.0,
+    }
 
     for member_index, dividends in enumerate(member_dividends):
         for mask in range(coalition_count):
-            key = canonical_coalition_key_from_mask(mask, player_ids)
-            member_rows.append(
-                {
-                    "baseline_member_index": int(member_index),
-                    "baseline_member_name": str(baseline_names[member_index]),
-                    "baseline_member_weight": float(weights[member_index]),
-                    "coalition_mask": int(mask),
-                    "coalition_key": coalition_key_text(key),
-                    "coalition_size": int(len(key)),
-                    "harsanyi_dividend": float(dividends[mask]),
-                }
+            checks["nonfinite_member_dividend_count"] += int(
+                not finite_number(dividends[mask])
             )
+            if include_details:
+                key = canonical_coalition_key_from_mask(mask, player_ids)
+                member_rows.append(
+                    {
+                        "baseline_member_index": int(member_index),
+                        "baseline_member_name": str(baseline_names[member_index]),
+                        "baseline_member_weight": float(weights[member_index]),
+                        "coalition_mask": int(mask),
+                        "coalition_key": coalition_key_text(key),
+                        "coalition_size": int(len(key)),
+                        "harsanyi_dividend": float(dividends[mask]),
+                    }
+                )
 
     for mask in range(coalition_count):
-        key = canonical_coalition_key_from_mask(mask, player_ids)
         values = [
             float(dividends[mask])
             for dividends in member_dividends
@@ -198,22 +213,45 @@ def compute_robust_harsanyi(
             robust_lambda=robust_lambda,
         )
         robust_dividends[int(mask)] = float(robust_value)
-        robust_rows.append(
-            {
-                "coalition_mask": int(mask),
-                "coalition_key": coalition_key_text(key),
-                "coalition_size": int(len(key)),
-                "behavior_support": coalition_key_text(
-                    behavior_support(mask, ordered_players)
-                ),
-                "mean_dividend": float(mean_value),
-                "sigma_dividend": float(sigma_value),
-                "robust_dividend": float(robust_value),
-                "withheld_dividend": float(mean_value - robust_value),
-                "abs_withheld_dividend": abs(float(mean_value - robust_value)),
-                "member_dividends": list(values),
-            }
+        withheld = float(mean_value - robust_value)
+        abs_withheld = abs(withheld)
+        withheld_dividends.append(withheld)
+        checks["nonfinite_robust_dividend_count"] += int(
+            not finite_number(mean_value)
+            or not finite_number(sigma_value)
+            or not finite_number(robust_value)
         )
+        checks["finite_abs_withheld_dividend_count"] += int(finite_number(abs_withheld))
+        checks["zeroed_robust_dividend_count"] += int(
+            finite_number(mean_value) and finite_number(robust_value)
+            and mean_value != 0.0 and robust_value == 0.0
+        )
+        if include_details:
+            key = canonical_coalition_key_from_mask(mask, player_ids)
+            robust_rows.append(
+                {
+                    "coalition_mask": int(mask),
+                    "coalition_key": coalition_key_text(key),
+                    "coalition_size": int(len(key)),
+                    "behavior_support": coalition_key_text(
+                        behavior_support(mask, ordered_players)
+                    ),
+                    "mean_dividend": float(mean_value),
+                    "sigma_dividend": float(sigma_value),
+                    "robust_dividend": float(robust_value),
+                    "withheld_dividend": withheld,
+                    "abs_withheld_dividend": abs_withheld,
+                    "member_dividends": list(values),
+                }
+            )
+
+    checks["finite_total_abs_withheld_dividend"] = float(
+        sum(abs(value) for value in withheld_dividends if finite_number(abs(value)))
+    )
+    checks["total_abs_withheld_dividend"] = float(
+        sum(abs(value) for value in withheld_dividends)
+    )
+    shrinkage_remainder = sum(withheld_dividends[1:])
 
     robust_table = None
     if reconstruct_table:
@@ -227,53 +265,6 @@ def compute_robust_harsanyi(
         "robust_dividends_by_mask": robust_dividends,
         "robust_dividend_rows": robust_rows,
         "member_dividend_rows": member_rows,
-        "checks": {
-            "robust_lambda": float(robust_lambda),
-            "baseline_member_count": int(len(member_value_tables)),
-            "nonfinite_member_dividend_count": int(
-                sum(
-                    1
-                    for row in member_rows
-                    if not finite_number(row["harsanyi_dividend"])
-                )
-            ),
-            "nonfinite_robust_dividend_count": int(
-                sum(
-                    1
-                    for row in robust_rows
-                    if (
-                        not finite_number(row["mean_dividend"])
-                        or not finite_number(row["sigma_dividend"])
-                        or not finite_number(row["robust_dividend"])
-                    )
-                )
-            ),
-            "finite_abs_withheld_dividend_count": int(
-                sum(
-                    1
-                    for row in robust_rows
-                    if finite_number(row["abs_withheld_dividend"])
-                )
-            ),
-            "zeroed_robust_dividend_count": int(
-                sum(
-                    1
-                    for row in robust_rows
-                    if finite_number(row["mean_dividend"])
-                    and finite_number(row["robust_dividend"])
-                    and row["mean_dividend"] != 0.0
-                    and row["robust_dividend"] == 0.0
-                )
-            ),
-            "finite_total_abs_withheld_dividend": float(
-                sum(
-                    row["abs_withheld_dividend"]
-                    for row in robust_rows
-                    if finite_number(row["abs_withheld_dividend"])
-                )
-            ),
-            "total_abs_withheld_dividend": float(
-                sum(row["abs_withheld_dividend"] for row in robust_rows)
-            ),
-        },
+        "shrinkage_remainder": shrinkage_remainder,
+        "checks": checks,
     }

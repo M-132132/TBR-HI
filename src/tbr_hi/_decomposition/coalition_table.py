@@ -3,7 +3,7 @@
 import itertools
 from dataclasses import dataclass
 from typing import Callable, Dict, Iterable, List, Mapping, Sequence, Tuple
-from .players import BRTPlayer as BRPlayer, player_track_map
+from ..players import BRTPlayer as BRPlayer, player_track_map
 
 CoalitionKey = Tuple[str, ...]
 

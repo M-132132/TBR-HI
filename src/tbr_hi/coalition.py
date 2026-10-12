@@ -28,6 +28,7 @@ def min_ade(prediction, target_future, target_valid, future_eval_steps=40):
 def compute_model_dependence(
     history, players, family, predict_target, target_future, target_valid,
     robust_lambda=0.25, future_eval_steps=40, predict_many=None, batch_size=8,
+    *, include_details=True,
 ):
     """
     功能：在共同有效玩家上精确计算条件基线恢复博弈及模型上下文依赖。
@@ -42,6 +43,7 @@ def compute_model_dependence(
       - future_eval_steps (int)：评价未来帧数
       - predict_many (Callable | None)：可选的批量预测回调，接收 list[History]
       - batch_size (int)：联盟前向批大小
+      - include_details (bool)：是否返回逐联盟和逐基线股利明细，默认 True
     输出：
       - (dict)：保留与排除玩家、基线数量与覆盖摘要、有效目标未来帧数、损失表和行为支持分解
     """
@@ -66,5 +68,8 @@ def compute_model_dependence(
         'players': retained, 'excluded_players': excluded, 'losses_by_baseline': losses,
         'baseline_summary': family.summary(),
         'target_valid_frame_count': int(target_valid[:future_eval_steps].sum()),
-        **decompose_loss_tables(retained, losses, family.weights, robust_lambda),
+        **decompose_loss_tables(
+            retained, losses, family.weights, robust_lambda,
+            include_details=include_details,
+        ),
     }

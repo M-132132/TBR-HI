@@ -58,7 +58,7 @@ class BehaviorThresholds:
     near_conflict_distance_max: float = 2.5
     near_conflict_min_frames: int = 1
 
-    # Scene-level tags
+    # Compatibility fields; scene-level tags are not computed by this package.
     congested_ratio_min: float = 0.35
     congested_mean_speed_max: float = 3.0
     lanechange_ratio_min: float = 0.12
@@ -69,11 +69,15 @@ class BehaviorThresholds:
 
 @dataclass(frozen=True)
 class AnalyzerConfig:
-    dt_default: float = 0.10
+    """Primary-label settings; timestamps and vehicle masks come from History."""
+
+    dt_default: float = 0.10  # Compatibility field; dt comes from History timestamps.
     min_valid_frames: int = 8
+    # Compatibility field; eligibility uses History.vehicle_mask.
     allowed_object_types: Tuple[str, ...] = field(default_factory=lambda: ("VEHICLE",))
     thresholds: BehaviorThresholds = field(default_factory=BehaviorThresholds)
-    processed_kinematic_source: str = "model_input_features"
+    processed_kinematic_source: str = "model_input_features"  # Compatibility field.
+
 
 def _default_behavior_families() -> Dict[str, Set[str]]:
     """
@@ -95,12 +99,26 @@ def _default_behavior_families() -> Dict[str, Set[str]]:
 
 @dataclass(frozen=True)
 class BehaviorConfig:
+    """Primary-label mapping; unmapped labels are excluded from BRT players."""
+
     families: Dict[str, Set[str]] = field(default_factory=_default_behavior_families)
+    # Retained constructor field; no fallback behavior group is created.
     unknown_family: str = "other"
 
 
 @dataclass(frozen=True)
+class PlayerGroupingConfig:
+    """Physical-score boundaries for the three BRT relevance tiers."""
+
+    core_threshold: float = 0.40
+    support_threshold: float = 0.25
+
+
+@dataclass(frozen=True)
 class InteractionConfig:
+    """Physical-relevance scoring and its separate relevant/weak diagnostic."""
+
+    # Controls interaction_level only; BRT tiers use PlayerGroupingConfig.
     threshold: float = 0.4
     sigma_distance: float = 20.0
     sigma_ttc: float = 4.0

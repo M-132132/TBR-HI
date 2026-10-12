@@ -3,7 +3,7 @@
 import math
 from typing import Dict, List, Tuple
 import numpy as np
-from .config import AnalyzerConfig, BehaviorThresholds
+from ..config import AnalyzerConfig, BehaviorThresholds
 
 
 def heading_unit(theta: float) -> Tuple[float, float]:

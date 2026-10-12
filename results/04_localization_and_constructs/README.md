@@ -1,6 +1,6 @@
 # Localization and constructs
 
-Browse response localization, descriptive construct relations, same-target historical-proximity comparisons and joint adjustment, alongside single-vehicle and candidate-count sensitivity.
+Browse response localization, descriptive construct relations, same-target historical-exposure comparisons and joint adjustment, alongside single-vehicle and candidate-count sensitivity.
 
 ## Interpretation
 
@@ -11,8 +11,8 @@ Keep the target, entity level, candidate rules and valid-scene count together. D
 [Open selected tables](tables.md). This page includes:
 
 - Reported localization and construct Spearman
-- Historical proximity: paired increments against the same response target
-- Joint historical-proximity adjustment
+- Historical exposure: paired increments against the same response target
+- Joint historical-exposure adjustment
 - Temporal BO2 and BO1 dependence sum
 
 - [D12–D14: player size, candidate count and adjustment sensitivity](player_count_results.md)

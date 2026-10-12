@@ -21,7 +21,7 @@ Stable and Lateral are the figure labels for stable motion and lateral maneuver.
 | --- | --- | --- |
 | D / BO1 strength | Absolute allocated single-behavior loss-side dependence | minADE-derived units, metres |
 | BO2 strength | Absolute allocated cross-behavior player-pair dependence | minADE-derived units, metres |
-| Rs / Rt | Absolute baseline-weighted first- or second-order risk-proxy response | Specified spatial or temporal proxy units |
+| Rs / Rt | Absolute baseline-weighted first- or second-order surrogate safety response | Specified spatial or temporal proxy units |
 | Gs / Gt | Ground-truth future-trajectory risk proxy | Specified proxy scale |
 | Hs / Ht | Ground-truth historical spatial or TTCE–DCE proximity measure | Specified proximity scale |
 | Ps / Pt | Entity-matched full-context prediction risk proxy | Specified proxy scale |
@@ -103,7 +103,7 @@ The [D15 page](04_localization_and_constructs/common_analysis_sets.md) gives the
 components, comparison families and coverage used in Figure 7a–d.
 
 Historical same-target comparisons rank the same response by D, Hs and Ht.
-Their paired differences are dependence minus historical-proximity ranking.
+Their paired differences are dependence minus historical-exposure ranking.
 Joint adjustment rank-regresses D and the response on both Hs and Ht within
 each scene, then correlates residuals on common complete-case scenes.
 

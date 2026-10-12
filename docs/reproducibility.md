@@ -5,7 +5,7 @@
 | Component | Inputs | Output |
 | --- | --- | --- |
 | Loss-table decomposition | Complete finite loss tables and ordered BRT players | Robust dividends, behavioral-support allocations, and D |
-| Trajectory audit | In-memory histories, a conditional-trajectory baseline family, and caller-supplied prediction callbacks | Loss-game dependence and full-context risk-proxy responses |
+| Trajectory audit | In-memory histories, a conditional-trajectory baseline family, and caller-supplied prediction callbacks | Loss-game dependence and full-context surrogate safety responses |
 | Synthetic example | Artificial trajectories and the included illustrative predictor | A CPU demonstration of the method interface |
 | Empirical result presentation | Precomputed formal aggregate statistics | Readable Markdown tables and two overview figures |
 
@@ -15,6 +15,17 @@ readers, model implementations, weights and experiment pipelines are supplied
 separately by the caller. CSV exports, per-scene result files and result-generation
 scripts are outside this repository's contents. The accompanying Supplementary
 Data provides the formal source statistics for the submission analyses.
+
+Player construction separates label thresholds (`AnalyzerConfig`), primary-label
+families (`BehaviorConfig`), physical-relevance scores (`InteractionConfig`) and
+BRT tiers (`PlayerGroupingConfig`). The six default families and tier boundaries
+0.40/0.25 implement the paper protocol. Changing a mapping or boundary changes
+the audited player space. See the [configuration reference](api.md#player-construction-configuration).
+
+The dependence APIs default to complete dividend-detail output.
+`include_details=False` skips the two dividend-detail tables and their
+construction overhead, retaining the same mathematical calculations and
+numerical summaries. It does not reduce the required coalition evaluations.
 
 ## Dependency requirements and environment reference
 

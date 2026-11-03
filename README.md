@@ -10,16 +10,21 @@ vehicles defined by behavior and target-conditioned physical-relevance tier.
 
 ## Representative traffic-scene audit
 
-![AutoBot traffic-scene audit: T3 and T5 form one BRT player, with synchronized 2D and 3D replay above fixed dependence and safety-response panels](assets/traffic-scene-t3-t5.gif)
+![AutoBot audit of the T3/T5 BRT player: traffic context, model dependence, and surrogate safety responses](assets/traffic-scene-t3-t5.gif)
+
+[Watch the video (26 s, 24 fps)](assets/traffic-scene-t3-t5.mp4)
 
 **AutoBot · one BRT player containing T3 and T5.** This player ranks first in
 model context dependence and in both spatial and temporal surrogate safety
 response strengths in this scene. T1 has the smallest clearance in the
 ground-truth future trajectories.
 
-The upper panels replay ground-truth historical and future trajectories in
-synchronized 2D and 3D views. The lower panels show the fixed audit-window
-results from the accompanying paper.
+The 26-second sequence starts with the traffic context and ground-truth future
+clearance (0–8 s), followed by history restoration for model context dependence
+(8–17 s) and history replacement for surrogate safety responses (17–26 s).
+The 2D panels compare ground-truth histories, conditional baselines, and target
+predictions. The 3D panels replay the corresponding ground-truth scene; lower
+result panels remain static within each stage.
 
 <details>
 <summary>Additional examples</summary>
